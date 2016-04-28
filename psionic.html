@@ -15,12 +15,12 @@ body {
 
 <div id="container"></div>
 
-<script src="threejs/build/three.min.js"></script>
-<script src="Tween.js"></script>
-<script src="psionic.js"></script>
-<script src="stage.js"></script>
-<script src="behavior.js"></script>
-<script src="effect.js"></script>
+<script src="libs/threejs/build/three.min.js"></script>
+<script src="libs/Tween.js"></script>
+<script src="javascript/psionic.js"></script>
+<script src="javascript/stage.js"></script>
+<script src="javascript/behavior.js"></script>
+<script src="javascript/effect.js"></script>
 
 
 
@@ -146,7 +146,7 @@ window.addEventListener('load', function(e) {
 				scene = new THREE.Scene();
 
         var loader = new THREE.TextureLoader();
-        var blur = loader.load('gaus2dD.jpg');
+        var blur = loader.load('images/gaus2dD.jpg');
 
         for (var t = 0; t < textures.length; t++) {
           textures[t] = loader.load('images/' + t + '.jpg');
