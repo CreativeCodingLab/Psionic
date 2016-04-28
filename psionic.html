@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>demo - shader</title>
+<meta charset="utf-8">
+<style>
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+</style>
+</head>
+<body onkeypress="keypress(event)">
+
+<div id="container"></div>
+
+<script src="threejs/build/three.min.js"></script>
+<script src="Tween.js"></script>
+<script src="psionic.js"></script>
+<script src="stage.js"></script>
+<script src="behavior.js"></script>
+<script src="effect.js"></script>
+
+
+
+
+<script id="vertexShader" type="x-shader/x-vertex">
+
+      precision mediump float;
+      precision mediump int;
+
+      uniform vec4 my_color;
+      uniform float time;
+
+      varying vec2 vUv;
+
+      void main()	{
+
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+      }
+
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+
+precision mediump float;
+      precision mediump int;
+
+      uniform sampler2D tex0;
+      uniform sampler2D texBlur;
+      uniform float uOff;
+      uniform float vOff;
+      uniform float blurOff;
+      uniform float uvScale;
+
+
+      uniform float time;
+
+     varying vec2 vUv;
+
+      void main()	{
+
+      vec2 useUV = vUv / uvScale;
+
+      vec2 useBlurUV = vUv * (1.0 - (blurOff * 2.0));
+
+      vec4 blurColor = texture2D(texBlur, useBlurUV + blurOff);
+      vec4 imageColor = texture2D(tex0, vec2(useUV.x + uOff, useUV.y + vOff));
+
+      //gl_FragColor = blurColor;
+      //gl_FragColor = imageColor;
+
+
+
+      gl_FragColor = vec4(vec3(imageColor * blurColor).xyz, blurColor.r * 0.5);
+
+
+      }
+
+</script>
+
+<script>
+
+
+function keypress(event) {
+
+  var keyVal = '?';
+
+  if (event.which != 0 && event.charCode != 0) {
+    keyVal = String.fromCharCode(event.which)
+  } else {
+    //return null // special key
+  }
+
+    //console.log("keyVal = '" + keyVal + "' at time " + performance.now());
+    console.log(performance.now());
+
+}
+
+
+var audio = new Audio();
+audio.src = 'psionic.mp3';
+audio.controls = true;
+//audio.autoplay = true;
+document.body.appendChild(audio);
+
+var context = new AudioContext();
+var analyser = context.createAnalyser();
+
+
+window.addEventListener('load', function(e) {
+  // Our <audio> element will be the audio source.
+  var source = context.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(context.destination);
+  audio.currentTime = 101;
+
+
+}, false);
+
+
+
+
+      var container;
+
+			var camera, scene, renderer;
+
+      var vs = document.getElementById( 'vertexShader' ).textContent;
+      var fs = document.getElementById( 'fragmentShader' ).textContent;
+
+      var loader = new THREE.TextureLoader();
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.getElementById( 'container' );
+
+        camera = new THREE.PerspectiveCamera( 50.0, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera.position.z = 5;
+
+				scene = new THREE.Scene();
+
+        var loader = new THREE.TextureLoader();
+        var blur = loader.load('gaus2dD.jpg');
+
+        for (var t = 0; t < textures.length; t++) {
+          textures[t] = loader.load('images/' + t + '.jpg');
+          textures[t].magFilter = THREE.NearestFilter;
+
+        }
+       
+        makeGrains(numCols, numRows, scene, textures[0], blur, vs, fs);
+
+
+        var t1s = secondsToPerc(0);
+        var t1e = secondsToPerc(29);
+
+
+//        var t2s = secondsToPerc(29);
+//        var t2e = secondsToPerc(60);
+         var t2s = secondsToPerc(0);
+        var t2e = secondsToPerc(72);
+
+
+
+        //var t3s = secondsToPerc(104);
+        //var t3e = secondsToPerc(130);
+        var t3s = secondsToPerc(0);
+        var t3e = secondsToPerc(40);
+
+        var t4s = secondsToPerc(40);
+        var t4e = secondsToPerc(85);
+
+
+
+
+        console.log("t1 : " + t1s + "/" + t1e);
+
+        var stages = new Array(  
+            //new Stage1("solo oboe", {s:t1s, e:t1e} )
+            //new Stage2("s2", {s:t2s, e:t2e})
+            new Stage3("s3", {s:t3s, e:t3e})
+            //new Stage4("s4", {s:t4s, e:t4e})
+
+
+            // new StageTest4("s2", {s:0.0, e:1.0})
+          // new StageTest2("s2", {s:0.2, e:0.9})
+          //  new StageTest2("s2", {s:0.3, e:0.6})
+
+            );
+
+        setupTimeline(scene, stages, 0, totalTime);
+
+        audio.play(); // = true;
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor( 0x000000 );
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        container.appendChild( renderer.domElement );
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+        /*
+           var coords = { x: 0, y: 0 };
+           var o0 = scene.children[ 0 ];
+
+           var yVal = {y:0.0};
+
+        //var tween = new TWEEN.Tween(o0.rotation)
+        var tween = new TWEEN.Tween(yVal)
+        .to( {y:Math.PI * 2.0}, 1000)
+        //.to({ x: 6.28, y: 6.28, z: 6.28 }, 1000)
+        // .easing(TWEEN.Easing.Sinusoidal.InOut)
+        .onUpdate(function() {
+        o0.position.y = 0.0 + Math.sin(yVal.y);
+        console.log(Math.sin(yVal.y));
+
+        })
+        //.onUpdate(function() {
+        //    console.log(coords.x, coords.y);
+        //    var o0 = scene.children[ 0 ];
+        //    o0.rotation.z = coords.y;
+        //    })
+        .repeat(5)
+        .startTime(3000)
+        //.yoyo(true)
+        .start();
+         */
+
+
+
+      }
+
+function onWindowResize( event ) {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+
+
+function animate() {
+
+  requestAnimationFrame( animate );
+
+  render();
+
+}
+
+function render() {
+  var time = performance.now();
+
+
+  TWEEN.update(time);
+
+
+  /*
+
+     var object1 = scene.children[ 0 ];
+     object1.rotation.x = time * 0.0009;
+     object1.rotation.y = time * 0.0005;
+     object1.material.uniforms.time.value = time * 0.005;
+
+     var object2 = scene.children[ 1 ];
+     object2.rotation.x = time * 0.0005;
+     object2.rotation.y = time * 0.0009;
+     object2.material.uniforms.time.value = time * 0.002;
+   */
+
+  /*
+  var object0 = scene.children[ 0 ];
+  object0.material.uniforms.uOff.value = 0.0;
+  object0.material.uniforms.vOff.value = 0.0;
+  */
+
+  /*
+     var object1 = scene.children[ 1 ];
+     object1.material.uniforms.uOff.value = 0.5;
+     object1.material.uniforms.vOff.value = 0.5;
+
+     var object2 = scene.children[ 2 ];
+     object2.material.uniforms.uOff.value = 0.25;
+     object2.material.uniforms.vOff.value = 0.25;
+
+     var object2 = scene.children[ 3 ];
+     object2.material.uniforms.uOff.value = 0.75;
+     object2.material.uniforms.vOff.value = 0.75;
+   */
+
+
+				renderer.render( scene, camera );
+			}
+
+		</script>
+
+	</body>
+</html>
+
