@@ -761,8 +761,6 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
     4263.710000000001,
     4486.595,
     5364.055,
-    ];
-  /*
     11504.08,
     14253.845000000001,
     14542.175000000003,
@@ -798,7 +796,7 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
     ];
 
-*/
+
 
 
   var numDarts = dartTimes.length;
