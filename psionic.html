@@ -171,21 +171,27 @@ window.addEventListener('load', function(e) {
         var t1e = secondsToPerc(29);
 
         var t2s = secondsToPerc(29);
-        var t2e = secondsToPerc(40);
+        var t2e = secondsToPerc(80);
 
-        var t3s = secondsToPerc(41);
-        var t3e = secondsToPerc(94);
+        var t3s = secondsToPerc(81);
+        var t3e = secondsToPerc(150);
         
 
         //var t3s = secondsToPerc(5);
-        //var t3e = secondsToPerc(90); //90
+        //var t3e = secondsToPerc(15); //90
 
-        var t4s = secondsToPerc(131);
-        var t4e = secondsToPerc(216);
+        var t4s = secondsToPerc(150);
+        var t4e = secondsToPerc(284);
+       // var t4s = secondsToPerc(30);
+       // var t4e = secondsToPerc(216);
 
 
-        var t5s = secondsToPerc(220);
-        var t5e = secondsToPerc(300);
+   var t5s = secondsToPerc(284);
+        var t5e = secondsToPerc(400);
+
+
+      //  var t5s = secondsToPerc(220);
+      //  var t5e = secondsToPerc(300);
 
 
 
@@ -193,13 +199,14 @@ window.addEventListener('load', function(e) {
         console.log("t1 : " + t1s + "/" + t1e);
 
         var stages = new Array(  
-            new Stage1("solo oboe", {s:t1s, e:t1e} ),
+           new Stage1("solo oboe", {s:t1s, e:t1e} ),
             new Stage2("s2", {s:t2s, e:t2e}),
-            new Stage3("s3", {s:t3s, e:t3e})
-            //new Stage4("s4", {s:t4s, e:t4e}),
+            new Stage3("s3", {s:t3s, e:t3e}),
+            new Stage4("s4", {s:t4s, e:t4e}),
+ // new Stage9("s9", {s:t1s, e:t1e})
+            
 
-
-             //new Stage5("s5", {s:t5s, e:t5e})
+             new Stage5("s5", {s:t5s, e:t5e})
           
              
              // new StageTest2("s2", {s:0.2, e:0.9})

@@ -175,6 +175,41 @@ function formationRings(gs, numRings, maxRadius) {
 /***********/
 
 
+function effectReset(gs, beginTime, lengthOfTime) {
+  
+   var tween = new TWEEN.Tween()
+    .onStart(function() {
+
+        console.log("in effectReset at time " + beginTime);
+
+
+   console.log("resetting " + gs.length + " grains");
+
+   for (var j = 0; j < gs.length; j++) {
+
+     var offs = getOffsetsForIndex(j,1.0);
+
+       behaviorTranslateTo( 
+            new Array(gs[j]), 
+            lengthOfTime, 
+            beginTime + 2000,
+            new THREE.Vector3(offs.x,offs.y,0),
+            gs[j], 
+            0   
+            );
+
+       gs[j].scale.x = 1.0;
+       gs[j].scale.y = 1.0;
+       gs[j].scale.z = 1.0;
+   }
+
+       })
+  .start(beginTime + 1000);
+
+
+}
+
+
 
 function effectShimmer(gs, beginTime, lengthOfTime, startLength, angle) {
 

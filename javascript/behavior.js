@@ -4,33 +4,52 @@ function identity(x) {
 }
 
 
+function behaviorReattach(startTime) {
+  var tween = new TWEEN.Tween()
+    .onStart(function() {
+
+      console.log("in behaviorReattach at time " + startTime);
+
+      for (var allg = grains().length - 1; allg >= 0 ; allg--) {
+     //   console.log("parent was " + grains()[allg].uuid); 
+        parent.add(grains()[allg]);  
+     //   console.log("parent now " + grains()[allg].uuid); 
+      }
+
+    })
+  .start(startTime);
+
+  return this.tween;
+}
+
+
 function behaviorFormation(gs, startTime, func, rings, dist) {
 
   var attachArr;
-   var tween = new TWEEN.Tween()
+  var tween = new TWEEN.Tween()
     .onStart(function() {
 
       this.attachArr = func(gs, rings, dist);
 
     })
-    .start(startTime);
+  .start(startTime);
 
-    return this.tween;
+  return this.tween;
 
 }
 
 
 function behaviorChangeTexture(gs, startTime, texture) {
 
-   var tween = new TWEEN.Tween()
+  var tween = new TWEEN.Tween()
     .onStart(function() {
-     for (var g = 0; g < gs.length; g++) {
-      gs[g].material.uniforms.tex0.value = texture;
-     }
+      for (var g = 0; g < gs.length; g++) {
+        gs[g].material.uniforms.tex0.value = texture;
+      }
     })
-    .start(startTime);
+  .start(startTime);
 
-    return this.tween;
+  return this.tween;
 
 }
 
@@ -42,22 +61,22 @@ function behaviorScaleFunc(gs, lengthOfTime, startTime = 0, to, func, scale, rep
 
   var rv = {v:0.0};
   var tv = {v:1.0}; 
- 
+
   this.tween = new TWEEN.Tween(rv)
     .to( tv, lengthOfTime)
     .onUpdate(function() {
 
-     var cv = {x:func(rv.v * to.x), y:func(rv.v * to.y), z:func(rv.v * to.z)};
-     var uv = {x:cv.x - func(pv * to.x), y:cv.y - func(pv * to.y), z:cv.z - func(pv * to.z)} ;
+      var cv = {x:func(rv.v * to.x), y:func(rv.v * to.y), z:func(rv.v * to.z)};
+      var uv = {x:cv.x - func(pv * to.x), y:cv.y - func(pv * to.y), z:cv.z - func(pv * to.z)} ;
 
       for (var g = 0; g < gs.length; g++) {
         gs[g].scale.x += (uv.x * scale);
         gs[g].scale.y += (uv.y * scale);
         gs[g].scale.z += (uv.z * scale);
-     }  
+      }  
 
       pv = rv.v;
-      
+
     })
   .repeat(repeat)
     .yoyo(true)
@@ -85,22 +104,22 @@ function behaviorRotateFunc(gs, lengthOfTime, startTime = 0, to, func, scale, re
 
   var rv = {v:0.0};
   var tv = {v:1.0}; 
- 
+
   this.tween = new TWEEN.Tween(rv)
     .to( tv, lengthOfTime)
     .onUpdate(function() {
 
-     var cv = {x:func(rv.v * to.x), y:func(rv.v * to.y), z:func(rv.v * to.z)};
-     var uv = {x:cv.x - func(pv * to.x), y:cv.y - func(pv * to.y), z:cv.z - func(pv * to.z)} ;
+      var cv = {x:func(rv.v * to.x), y:func(rv.v * to.y), z:func(rv.v * to.z)};
+      var uv = {x:cv.x - func(pv * to.x), y:cv.y - func(pv * to.y), z:cv.z - func(pv * to.z)} ;
 
       for (var g = 0; g < gs.length; g++) {
         gs[g].rotation.x += (uv.x * scale);
         gs[g].rotation.y += (uv.y * scale);
         gs[g].rotation.z += (uv.z * scale);
-     }  
+      }  
 
-     pv = rv.v;
-      
+      pv = rv.v;
+
     })
   .repeat(repeat)
     .yoyo(true)
@@ -135,7 +154,7 @@ function behaviorTranslateTo(gs, lengthOfTime, startTime, to, anchor = parent, r
 
   var rv = {v:0.0};
   var tv = {v:1.0}; 
- 
+
 
   var tween = new TWEEN.Tween(rv)
     .onStart(function() {
@@ -174,30 +193,30 @@ function behaviorPositionFunc(gs, lengthOfTime, startTime = 0, to, func, scale, 
 
   var rv = {v:0.0};
   var tv = {v:1.0}; 
- 
+
   this.tween = new TWEEN.Tween(rv)
     .to( tv, lengthOfTime)
     .onStart(function() {
       //console.log("tranlsation starting at " + Math.floor(performance.now( )));
       //console.log("lengthOfTime = " + lengthOfTime);
     })
-    .onUpdate(function() {
+  .onUpdate(function() {
 
-     var cv = {x:func(rv.v * to.x), y:func(rv.v * to.y), z:func(rv.v * to.z)};
-     var uv = {x:cv.x - func(pv * to.x), y:cv.y - func(pv * to.y), z:cv.z - func(pv * to.z)} ;
+    var cv = {x:func(rv.v * to.x), y:func(rv.v * to.y), z:func(rv.v * to.z)};
+    var uv = {x:cv.x - func(pv * to.x), y:cv.y - func(pv * to.y), z:cv.z - func(pv * to.z)} ;
 
-      for (var g = 0; g < gs.length; g++) {
-        gs[g].position.x += (uv.x * scale);
-        gs[g].position.y += (uv.y * scale);
-        gs[g].position.z += (uv.z * scale);
-     }  
+    for (var g = 0; g < gs.length; g++) {
+      gs[g].position.x += (uv.x * scale);
+      gs[g].position.y += (uv.y * scale);
+      gs[g].position.z += (uv.z * scale);
+    }  
 
-      pv = rv.v;
-      
-    })
-//  .easing(TWEEN.Easing.Quadratic.InOut)
-  
- .repeat(repeat)
+    pv = rv.v;
+
+  })
+  //  .easing(TWEEN.Easing.Quadratic.InOut)
+
+  .repeat(repeat)
     .yoyo(yoyo)
     .start(startTime);
 
@@ -232,12 +251,12 @@ function behaviorSineZ(gs, lengthOfTime, startTime, to = Math.PI * 2, scale = 1.
 
 
 /*
-function Behavior(grains, lengthOfTime, to) {
-  this.grains = grains;
-  this.to = Math.PI * 2.0;
-  this.lengthOfTime = lengthOfTime;
-  this.tween = null;
- }
+   function Behavior(grains, lengthOfTime, to) {
+   this.grains = grains;
+   this.to = Math.PI * 2.0;
+   this.lengthOfTime = lengthOfTime;
+   this.tween = null;
+   }
 //Behavior.prototype.behave = function() {};
 
 
@@ -245,45 +264,45 @@ BehaviorTest.prototype = new Behavior();
 BehaviorTest.prototype.constructor = BehaviorTest;
 
 function BehaviorTest(grains, lengthOfTime, to) {
-  Behavior.call(this, grains, lengthOfTime, to); 
+Behavior.call(this, grains, lengthOfTime, to); 
 
 
-  var tvs = {v:0.0, gs:this.grains, pv:0.0, cv:0.0, uv:0.0};
+var tvs = {v:0.0, gs:this.grains, pv:0.0, cv:0.0, uv:0.0};
 
-  this.tween = new TWEEN.Tween(tvs)
-    .to( {v:this.to}, this.lengthOfTime)
-    .onUpdate(function() {
-      tvs.cv = tvs.v;  
-      tvs.uv = (tvs.cv - tvs.pv) ;
+this.tween = new TWEEN.Tween(tvs)
+.to( {v:this.to}, this.lengthOfTime)
+.onUpdate(function() {
+tvs.cv = tvs.v;  
+tvs.uv = (tvs.cv - tvs.pv) ;
 
-     for (var g = 0; g < tvs.gs.length; g++) {
+for (var g = 0; g < tvs.gs.length; g++) {
 
-        tvs.gs[g].rotation.z += tvs.uv;
-     }
+tvs.gs[g].rotation.z += tvs.uv;
+}
 
-      tvs.pv = tvs.cv;
-    } );  
+tvs.pv = tvs.cv;
+} );  
 
 }
 */
 /*
-BehaviorTest.prototype.behave = function() {
-      this.curVal = this.tweenVal.v;  
-      this.useVal = (this.curVal - this.prevVal) ;
+   BehaviorTest.prototype.behave = function() {
+   this.curVal = this.tweenVal.v;  
+   this.useVal = (this.curVal - this.prevVal) ;
 
-      console.log("to = " + this.to);
-      console.log("tweenVal = " + this.tweenVal);
-      console.log("curVal = " + this.curVal);
+   console.log("to = " + this.to);
+   console.log("tweenVal = " + this.tweenVal);
+   console.log("curVal = " + this.curVal);
 
-      for (var g = 0; g < this.grains.length; g++) {
+   for (var g = 0; g < this.grains.length; g++) {
 
-        this.grains[g].rotation.z += this.useVal;
-      
-        //console.log("which.rotation.z" + this.grains[g].rotation.z);
-        //console.log("C " + g);
-      }
-      this.prevVal = this.curVal;
- 
+   this.grains[g].rotation.z += this.useVal;
+
+//console.log("which.rotation.z" + this.grains[g].rotation.z);
+//console.log("C " + g);
+}
+this.prevVal = this.curVal;
+
 }
 
 */

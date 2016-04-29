@@ -544,6 +544,68 @@ Stage4.prototype.action = function(beginTime, lengthOfTime) {
 
 
 
+Stage9.prototype = new Stage(); 
+Stage9.prototype.constructor = Stage9;
+
+function Stage9(name, timing) {
+  Stage.call(this, name, timing); 
+}
+
+Stage9.prototype.action = function(beginTime, lengthOfTime) {
+  
+  var tween = new TWEEN.Tween()
+    .onStart(function() {
+
+    //  shuffleArray(grains());
+
+      var attachArr = formationRings(grains(), 5, 1.0);
+
+     
+      
+      for (var r = 0; r < attachArr.length; r++) {
+        var ra = attachArr[r];
+
+        parent.add(ra.parentObj);
+
+        for (var g = 0; g < ra.grainObjs.length; g++) {
+
+          var ga = ra.grainObjs[g];
+          var grain = ga.grain;
+          console.log("A parent was " + grain.uuid); 
+
+          ra.parentObj.add(grain); //in THREEjs, adding automatically handles removing it from current parent
+          console.log("A parent now " + ra.parentObj.uuid); 
+
+
+          behaviorTranslateTo( new Array(grain), 
+            lengthOfTime/2, 
+            beginTime,
+            vecToArr(ga.pos), 
+            grain,
+            0   
+            );
+        }
+
+        console.log("A grains().length = " + grains().length);
+
+      
+       
+       
+
+      }
+
+        behaviorReattach(lengthOfTime/2 + 100);
+
+
+      effectReset(grains(), lengthOfTime/2 + 1000, lengthOfTime/4)
+
+      
+    })
+ .start(beginTime + 1000);
+
+
+}
+
 Stage3.prototype = new Stage(); 
 Stage3.prototype.constructor = Stage3;
 
@@ -554,58 +616,59 @@ function Stage3(name, timing) {
 Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
 
-  shuffleArray(grains());
 
-
-//formation should be in a behavior, otherwise the scene graph changes right away!
+  //formation should be in a behavior, otherwise the scene graph changes right away!
   //
   //var bf = behaviorFormation( grains(), beginTime, formationRings, 5, 2.5);
   //var attachArr = bf.attachArr;
- 
 
- var tween = new TWEEN.Tween()
+
+  var tween = new TWEEN.Tween()
     .onStart(function() {
 
-   
-  var attachArr = formationRings(grains(), 5, 2.0);
+      shuffleArray(grains());
 
-  for (var r = 0; r < attachArr.length; r++) {
 
-    var ra = attachArr[r];
-    parent.add(ra.parentObj);
 
-    for (var g = 0; g < ra.grainObjs.length; g++) {
+      var attachArr = formationRings(grains(), 5, 2.0);
 
-      var ga = ra.grainObjs[g];
+      for (var r = 0; r < attachArr.length; r++) {
 
-      var grain = ga.grain;
+        var ra = attachArr[r];
+        parent.add(ra.parentObj);
 
-      ra.parentObj.add(grain); //in THREEjs, adding automatically handles removing it from current parent
+        for (var g = 0; g < ra.grainObjs.length; g++) {
+
+          var ga = ra.grainObjs[g];
+
+          var grain = ga.grain;
+
+          ra.parentObj.add(grain); //in THREEjs, adding automatically handles removing it from current parent
 
 
           behaviorTranslateTo( new Array(grain), 
-          lengthOfTime/2, 
-          beginTime,
-          vecToArr(ga.pos), 
-          grain,
-          0   
-          );
-          
-      
-    }
-
-    if (r%2 == 0) {
-     // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, Math.PI);
-      behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI);
-
-      if (r == 4) {
-   behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI, 32.0);
+              lengthOfTime/2, 
+              beginTime,
+              vecToArr(ga.pos), 
+              grain,
+              0   
+              );
 
 
-      }
-    } else {
-     // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, -Math.PI);
-  //    behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, -Math.PI);
+        }
+
+        if (r%2 == 0) {
+          // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, Math.PI);
+          behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI);
+
+          if (r == 4) {
+            behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI, 32.0);
+
+
+          }
+        } else {
+          // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, -Math.PI);
+          //    behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, -Math.PI);
     } 
   }
 
@@ -698,6 +761,8 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
     4263.710000000001,
     4486.595,
     5364.055,
+    ];
+  /*
     11504.08,
     14253.845000000001,
     14542.175000000003,
@@ -733,13 +798,13 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
     ];
 
-
+*/
 
 
   var numDarts = dartTimes.length;
 
-  var totalDartTime = 30000; 
-  var lastBeginTime = beginTime + totalDartTime;
+ // var totalDartTime = 000; 
+ // var lastBeginTime = beginTime + totalDartTime;
 
   effectDart(attachArr[1].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
 
@@ -749,9 +814,19 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
 
 
+ behaviorReattach(lengthOfTime * 2  + 100);
+ effectReset(grains(), lengthOfTime * 2 + 1000, 1000)
+
+
+
+ //at end, reset back to all children attached to a single parent
+ //for (var r = grains().length - 1; r >= 0 ; r--) {
+ //   parent.add(grains()[r]);  
+ //}
+
+
     })
  .start(beginTime);
-
 
 
 }

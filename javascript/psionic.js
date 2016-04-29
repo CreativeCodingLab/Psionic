@@ -5,6 +5,8 @@ var numRows = 12;
 var textures = new Array(5);
 
 var parent = new THREE.Object3D();
+parent.name = "original parent";
+
 var grainsArr = new Array(); //to hold all grains, regardless of where they are in the scene graph
 
 function grains() {
@@ -12,9 +14,7 @@ function grains() {
 }
 
 function secondsToPerc(sec) {
-
   return (sec * 1000) / totalTime;
-
 }
 
 function makeGrains(cols, rows, scene, tex0, blur, vs, fs) {
