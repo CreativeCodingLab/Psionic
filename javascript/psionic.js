@@ -71,6 +71,23 @@ function makeGrains(cols, rows, scene, tex0, blur, vs, fs) {
   }
 }
 
+
+function getOffsetsForIndexB(g, scale = 1.0, rs, cs) {
+
+  var gX = Math.floor(g/cs);
+  var gY = g%cs;
+
+  var length = 2.0 * scale;
+
+  var xinc = (length*1.0)/(cs-1);
+  var yinc = (length*1.0)/(rs-1);
+  var offX = -length/2.0 + xinc*gX;
+  var offY = -length/2.0 + yinc*gY;
+
+  var offs = {x:offX, y:offY};
+  return offs;
+}
+
 function getOffsetsForIndex(g, scale = 1.0) {
 
   var gX = Math.floor(g/numCols);

@@ -6,10 +6,11 @@ function identity(x) {
 
 function behaviorFormation(gs, startTime, func, rings, dist) {
 
+  var attachArr;
    var tween = new TWEEN.Tween()
     .onStart(function() {
 
-      func(gs, rings, dist);
+      this.attachArr = func(gs, rings, dist);
 
     })
     .start(startTime);
@@ -34,7 +35,7 @@ function behaviorChangeTexture(gs, startTime, texture) {
 }
 
 
-
+//"to" is a named array
 function behaviorScaleFunc(gs, lengthOfTime, startTime = 0, to, func, scale, repeat = 0) {
 
   var pv = 0.0;
@@ -68,6 +69,11 @@ function behaviorScaleFunc(gs, lengthOfTime, startTime = 0, to, func, scale, rep
 
 
 function behaviorScale(gs, lengthOfTime, startTime = 0, to, scale = 1.0, repeat = 0) {
+  return behaviorScaleFunc(gs, lengthOfTime, startTime, to, identity, scale, repeat);
+}
+
+
+function behaviorScaleSin(gs, lengthOfTime, startTime = 0, to, func, scale = 1.0, repeat = 0) {
   return behaviorScaleFunc(gs, lengthOfTime, startTime, to, identity, scale, repeat);
 }
 
@@ -214,6 +220,10 @@ function behaviorSineX(gs, lengthOfTime, startTime, to = Math.PI * 2, scale = 1.
 
 function behaviorSineY(gs, lengthOfTime, startTime, to = Math.PI * 2, scale = 1.0, repeat = 0) {
   return behaviorSine(gs, lengthOfTime, startTime, {x:0, y:to, z:0}, scale, repeat);
+}
+
+function behaviorSineZ(gs, lengthOfTime, startTime, to = Math.PI * 2, scale = 1.0, repeat = 0) {
+  return behaviorSine(gs, lengthOfTime, startTime, {x:0, y:0, z:to}, scale, repeat);
 }
 
 

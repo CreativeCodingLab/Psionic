@@ -116,7 +116,7 @@ window.addEventListener('load', function(e) {
   var source = context.createMediaElementSource(audio);
   source.connect(analyser);
   analyser.connect(context.destination);
-  audio.currentTime = 101;
+  audio.currentTime = 0.5;
 
 
 }, false);
@@ -156,25 +156,36 @@ window.addEventListener('load', function(e) {
        
         makeGrains(numCols, numRows, scene, textures[0], blur, vs, fs);
 
+/*
+        var t1s = secondsToPerc(0);
+        var t1e = secondsToPerc(29);
+
+        var t2s = secondsToPerc(29);
+        var t2e = secondsToPerc(103);
+
+        var t3s = secondsToPerc(108);
+        var t3e = secondsToPerc(194);
+*/     
 
         var t1s = secondsToPerc(0);
         var t1e = secondsToPerc(29);
 
+        var t2s = secondsToPerc(29);
+        var t2e = secondsToPerc(40);
 
-//        var t2s = secondsToPerc(29);
-//        var t2e = secondsToPerc(60);
-         var t2s = secondsToPerc(0);
-        var t2e = secondsToPerc(72);
+        var t3s = secondsToPerc(41);
+        var t3e = secondsToPerc(94);
+        
+
+        //var t3s = secondsToPerc(5);
+        //var t3e = secondsToPerc(90); //90
+
+        var t4s = secondsToPerc(131);
+        var t4e = secondsToPerc(216);
 
 
-
-        //var t3s = secondsToPerc(104);
-        //var t3e = secondsToPerc(130);
-        var t3s = secondsToPerc(0);
-        var t3e = secondsToPerc(40);
-
-        var t4s = secondsToPerc(40);
-        var t4e = secondsToPerc(85);
+        var t5s = secondsToPerc(220);
+        var t5e = secondsToPerc(300);
 
 
 
@@ -182,14 +193,16 @@ window.addEventListener('load', function(e) {
         console.log("t1 : " + t1s + "/" + t1e);
 
         var stages = new Array(  
-            //new Stage1("solo oboe", {s:t1s, e:t1e} )
-            //new Stage2("s2", {s:t2s, e:t2e})
+            new Stage1("solo oboe", {s:t1s, e:t1e} ),
+            new Stage2("s2", {s:t2s, e:t2e}),
             new Stage3("s3", {s:t3s, e:t3e})
-            //new Stage4("s4", {s:t4s, e:t4e})
+            //new Stage4("s4", {s:t4s, e:t4e}),
 
 
-            // new StageTest4("s2", {s:0.0, e:1.0})
-          // new StageTest2("s2", {s:0.2, e:0.9})
+             //new Stage5("s5", {s:t5s, e:t5e})
+          
+             
+             // new StageTest2("s2", {s:0.2, e:0.9})
           //  new StageTest2("s2", {s:0.3, e:0.6})
 
             );

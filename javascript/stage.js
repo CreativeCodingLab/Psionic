@@ -228,167 +228,6 @@ function formationRings(gs, numRings, maxRadius) {
 /***********/
 
 
-
-function effectShimmer(gs, beginTime, lengthOfTime, startLength, angle) {
-
-  var loopSpeed = 1.0;
-
-  var currentBeginTime = 0;
-
-  var scale = 1.0;
-
-  var loopSpeedMultiplier = 0.8;
-
-  var numLoops = 0;
-  var cLT = startLength; // * loopSpeedMultiplier;
-  var useStartLength = startLength;
-
-  console.log("in effectShimmer: lengthOfTime = " + lengthOfTime); 
-  console.log("in effectShimmer: startLength = " + startLength);  
- 
-  var loopSpeeds = new Array();
-
-  for (var c = 0; c < 100; c++) {
-  
-     loopSpeeds.push(useStartLength);
-     
-    var useStartLength = useStartLength * loopSpeedMultiplier;
-    cLT += useStartLength;
-   
-   console.log("useStartLength = " + useStartLength + "\ncLT = " + cLT);  
-     if (cLT > lengthOfTime || useStartLength < 1) {
-       console.log(" cLT > lengthOfTime ");
-      break;
-    }
-
-   numLoops++;
-  console.log("numLoops = " + numLoops);
-
-
-    
-  }
-
- // return 0;
-
-   cLT = startLength;
-
-  for (var loop = 0; loop <= numLoops; loop++) {
-
-
-    var useLengthOfTime = loopSpeeds[loop]; //lengthOfTime * loopSpeed;
-
-    console.log("useLengthOfTime = " + useLengthOfTime);
-    //loopSpeed *= loopSpeedMultiplier;
-
-    scale *= 0.9;
-
-    for (var g = 0; g < gs.length; g++) {
-
-      var delayTime = getRandomBetween(0, useLengthOfTime/4);
-      var lot = useLengthOfTime; // - delayTime / 2;
-
-      var whereTo = Math.PI;
-
-      if (Math.random() < 0.25) {
-        whereTo = -Math.PI;
-      } else if (Math.random() < 0.5) {
-        whereTo = -Math.PI;
-      } else if (Math.random() < 0.75) {
-        whereTo = Math.PI;
-      }
-
-
-    //  if ( loop%2 == 0 ) {
-        behaviorSineY( 
-            new Array(gs[g]), 
-            lot, 
-            beginTime + currentBeginTime + delayTime / 2,
-            whereTo,
-            scale,
-            0   
-            );
-
-
-        behaviorSineX( 
-            new Array(gs[g]), 
-            lot, 
-            beginTime + currentBeginTime + delayTime / 2,
-            whereTo * 32,
-            0.1,
-            0   
-            );
-     // } else {
-       
-       /*
-        behaviorSineX( 
-            new Array(gs[g]), 
-            lot, 
-            beginTime + currentBeginTime + delayTime / 2,
-            whereTo,
-            scale,
-            0   
-            );
-
-
-        behaviorSineY( 
-            new Array(gs[g]), 
-            lot, 
-            beginTime + currentBeginTime + delayTime / 2,
-            whereTo * 32,
-            0.1,
-            0   
-            );
-      }
-      */
-    }
-
-    currentBeginTime += useLengthOfTime;
-
-  }
-}
-
-function effectSparkle(gs, beginTime, lengthOfTime, flickerRateMin, flickerRateMax, scaleMin, scaleMax   ) {
-
-  //SPARKLE
-  for (var i = 0; i < gs.length; i++) {
-
-    var flickerRate = getRandomBetween(flickerRateMin, flickerRateMax);
-    var repeatVal = Math.floor (1.0 / flickerRate);
-
-    if (repeatVal % 2 == 0) { repeatVal -= 1; }
-
-    var tot = flickerRate * (repeatVal + 1);
-
-    var totalTime = lengthOfTime * tot;
-    var flickerTime = lengthOfTime * (flickerRate);
-    var startTime = lengthOfTime - totalTime;
-
-
-    /* 
-       console.log("repeats = " + repeatVal + " flickerTime = " + flickerTime + "tot = " + tot);
-       console.log("startTime = " + (startTime));
-       console.log("totalTime = " + (totalTime));
-       console.log("del + tot = " + (startTime + totalTime));
-       */
-
-
-    var scaleVal = getRandomBetween(scaleMin,scaleMax);
-
-    behaviorScale(
-        new Array(grains()[i]), 
-        flickerTime,
-        beginTime + startTime, 
-        {x:scaleVal, y:scaleVal, z:0.0},
-        1.0,
-          repeatVal
-          ); 
-  }
-
-}
-
-
-/***********/
-
 function Stage(name, timing) {
   this.name = name;
   this.timing = timing;
@@ -717,10 +556,18 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
   shuffleArray(grains());
 
-  //formation should be in a behavior, otherwise the scene graph changes right away!
+
+//formation should be in a behavior, otherwise the scene graph changes right away!
   //
-  //behaviorFormation( grains(), beginTime + lengthOfTime/2, formationRings, 5, 1.8);
-  var attachArr = formationRings(grains(), 5, 2.5);
+  //var bf = behaviorFormation( grains(), beginTime, formationRings, 5, 2.5);
+  //var attachArr = bf.attachArr;
+ 
+
+ var tween = new TWEEN.Tween()
+    .onStart(function() {
+
+   
+  var attachArr = formationRings(grains(), 5, 2.0);
 
   for (var r = 0; r < attachArr.length; r++) {
 
@@ -735,100 +582,176 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
       ra.parentObj.add(grain); //in THREEjs, adding automatically handles removing it from current parent
 
-      //if (r == 0) {
-      behaviorTranslateTo( new Array(grain), 
-          lengthOfTime, 
+
+          behaviorTranslateTo( new Array(grain), 
+          lengthOfTime/2, 
           beginTime,
           vecToArr(ga.pos), 
           grain,
           0   
           );
-      //}
+          
+      
     }
 
     if (r%2 == 0) {
-      behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, Math.PI);
+     // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, Math.PI);
       behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI);
+
+      if (r == 4) {
+   behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI, 32.0);
+
+
+      }
     } else {
-      behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, -Math.PI);
-      behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, -Math.PI);
+     // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, -Math.PI);
+  //    behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, -Math.PI);
     } 
   }
 
-
-  var sparkleLoops = 20;
-  var beginSparkleTime = beginTime + 0; //lengthOfTime/4;
   
-  var sparkleLoopTime = (lengthOfTime - lengthOfTime/3) / sparkleLoops;
+  var sparkleLoops = 20;
+  var beginSparkleTime = beginTime + lengthOfTime/4;
+  
+  var sparkleLoopTime = (lengthOfTime - lengthOfTime/2) / sparkleLoops;
 
+  //gs, beginTime, lengthOfTime, flickerRateMin, flickerRateMax, scaleMin, scaleMax
   for (var t = 0; t < sparkleLoops; t++) {
-    effectSparkle( attachArr[0].grainObjs, beginSparkleTime + (sparkleLoopTime) * t, sparkleLoopTime, 0.05, 0.1, 0.01, 1.1);
+    effectSparkle( attachArr[0].parentObj.children, beginSparkleTime + (sparkleLoopTime) * t, sparkleLoopTime, 0.05, 0.1, 0.01, 1.04);
   }
 
 
+  //for (var el = 0; el < attachArr[0].parentObj.children.length; el++) {
+   
+ 
+  behaviorScale(attachArr[0].parentObj.children, lengthOfTime - lengthOfTime/2, beginSparkleTime, {x:7.0,y:7.0,z:0.0}, 1.0, 1);
   
+   //}
+
+
+ 
   for (var aag = 0; aag < attachArr[1].parentObj.children.length; aag++) {
 
-  var offs = getOffsetsForIndex(aag, 0.5);
+    var side = Math.floor(Math.sqrt(attachArr[1].parentObj.children.length));
+    var offs = getOffsetsForIndexB(aag, 2.0, side, side);
+    var grain = attachArr[1].parentObj.children[aag];
 
-  var grain = attachArr[1].parentObj.children[aag];
+    console.log("grain = " + grain.position.x);
 
-  console.log("grain = " + grain.position.x);
-
-          behaviorTranslateTo(  
-            new Array(grain), 
-            1000, 
-            beginTime + 1000,
-            new THREE.Vector3(offs.x,offs.y,0),
-            grain, 
-            0   
-            );
-
-}
+    behaviorTranslateTo(  
+        new Array(grain), 
+        1000, 
+        beginTime + lengthOfTime - lengthOfTime / 16 ,
+        new THREE.Vector3(offs.x,offs.y,0),
+        grain, 
+        0   
+        );
+  }
 
    
- var dartTimes = [
-2133.7200000000003,
-2345.73,
-2567.435,
-4017.4150000000004,
-4263.710000000001,
-4486.595,
-5364.055,
-11504.08,
-14253.845000000001,
-14542.175000000003,
-14850.420000000002,
-15174.255000000001,
-18326.320000000003,
-19624.445,
-20019.8,
-20392.000000000004,
-20592.34,
-20736.815,
-21037.53,
-21943.675000000003,
-22326.925000000003,
-22727.515,
-23176.160000000003,
-23816.125000000004,
-24439.140000000003,
-25426.250000000004,
-25614.295000000002,
-25808.440000000002,
-29312.18
+  for (var aag = 0; aag < attachArr[3].parentObj.children.length; aag++) {
 
-];
+    var side = Math.floor(Math.sqrt(attachArr[3].parentObj.children.length));
+    var offs = getOffsetsForIndexB(aag, 2.0, side, side);
+    var grain = attachArr[3].parentObj.children[aag];
+
+    console.log("grain = " + grain.position.x);
+
+    behaviorTranslateTo(  
+        new Array(grain), 
+        1000, 
+        beginTime + lengthOfTime - lengthOfTime / 4,
+        new THREE.Vector3(offs.x,offs.y,0),
+        grain, 
+        0   
+        );
+  }
+
+  
+  for (var aag = 0; aag < attachArr[4].parentObj.children.length; aag++) {
+
+    var side = Math.floor(Math.sqrt(attachArr[4].parentObj.children.length));
+    var offs = getOffsetsForIndexB(aag, 2.0, side, side);
+    var grain = attachArr[4].parentObj.children[aag];
+
+    console.log("grain = " + grain.position.x);
+
+    behaviorTranslateTo(  
+        new Array(grain), 
+        1000, 
+        beginTime + lengthOfTime - lengthOfTime / 4,
+        new THREE.Vector3(offs.x,offs.y,0),
+        grain, 
+        0   
+        );
+  }
 
 
 
 
- var numDarts = dartTimes.length;
+
+  var dartTimes = [
+    2133.7200000000003,
+    2345.73,
+    2567.435,
+    4017.4150000000004,
+    4263.710000000001,
+    4486.595,
+    5364.055,
+    11504.08,
+    14253.845000000001,
+    14542.175000000003,
+    14850.420000000002,
+    15174.255000000001,
+    18326.320000000003,
+    19624.445,
+    20019.8,
+    20392.000000000004,
+    20592.34,
+    20736.815,
+    21037.53,
+    21943.675000000003,
+    22326.925000000003,
+    22727.515,
+    23176.160000000003,
+    23816.125000000004,
+    24439.140000000003,
+    25426.250000000004,
+    25614.295000000002,
+    25808.440000000002,
+    29312.18,
+    32000,
+    33000,
+    34000,
+    35000,
+    38000,
+    40000,
+    41000,
+    43000,
+    45000,  
+
+
+    ];
+
+
+
+
+  var numDarts = dartTimes.length;
 
   var totalDartTime = 30000; 
   var lastBeginTime = beginTime + totalDartTime;
 
-  effectDart(attachArr[1].parentObj.children, beginTime + 4000, lengthOfTime, dartTimes);
+  effectDart(attachArr[1].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
+
+ effectDart(attachArr[3].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
+
+ effectDart(attachArr[4].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
+
+
+
+    })
+ .start(beginTime);
+
 
 
 }
@@ -870,44 +793,117 @@ Stage2.prototype.action = function(beginTime, lengthOfTime) {
 
 
 
-StageTest3.prototype = new Stage(); 
-StageTest3.prototype.constructor = StageTest3;
+Stage5.prototype = new Stage(); 
+Stage5.prototype.constructor = Stage5;
 
-function StageTest3(name, timing) {
+function Stage5(name, timing) {
   Stage.call(this, name, timing); 
 }
 
-StageTest3.prototype.action = function(beginTime, lengthOfTime) {
+Stage5.prototype.action = function(beginTime, lengthOfTime) {
 
+  
+    var even = grains().filter(filterEven);
+    var odd = grains().filter(filterOdd);
+  
 
-  behaviorSineY( grains().filter(filterEven), 
+  behaviorSineY( even, 
       lengthOfTime, 
       beginTime,
-      Math.PI * 2,
-      0
+      Math.PI * 24,
+      0.2
+      );
+      
+
+   behaviorSineX( odd, 
+      lengthOfTime, 
+      beginTime,
+      -Math.PI * 24 * 4,
+      1.2
       );
 
+   
 
-  /*
-     behaviorScaleXY( 
-  //scene.children, 
-  new Array(parent),
-  lengthOfTime/2.0, 
+ 
+
+   for (var i = 0; i < odd.length; i++) {
+
+    var howMany = Math.floor(getRandomBetween(10,30));
+
+     behaviorScaleSin( 
+  new Array(odd[i]),
+  lengthOfTime/howMany, 
   beginTime,
-  5.0,
-  1
+  new THREE.Vector3(1.0,1.0,0.0),
+  Math.sin,
+  -5.0,
+  howMany
   );
-  */
+
+   behaviorSineZ( 
+      new Array(odd[i]),
+      lengthOfTime/howMany, 
+      beginTime,
+      -Math.PI * 8,
+      1.0,
+      howMany
+      );
 
 
-  var vec = new THREE.Vector3(1,0,0);
 
-  behaviorRotateAroundAxis( vec, new Array(parent), 
+   }
+
+   
+   for (var i = 0; i < even.length; i++) {
+
+    var howMany = Math.floor(getRandomBetween(10,30));
+
+     behaviorScaleSin( 
+  new Array(even[i]),
+  lengthOfTime/howMany, 
+  beginTime,
+  new THREE.Vector3(1.0,1.0,0.0),
+  Math.sin,
+  -5.0,
+  howMany
+  );
+
+ behaviorSineZ( 
+      new Array(even[i]),
+      lengthOfTime/howMany, 
+      beginTime,
+      -Math.PI,
+      1.0,
+      howMany
+      );
+   }
+
+
+  behaviorScaleSin( 
+  even,
+  lengthOfTime/8.0, 
+  beginTime,
+  new THREE.Vector3(1.0,1.0,0.0),
+  Math.sin,
+  -2.0,
+  16
+  );
+ 
+  
+
+
+  behaviorRotateZ(new Array(parent), 
       lengthOfTime, 
       beginTime,
-      Math.PI * 2.0,
-      0
+      Math.PI * 24.0,
+      1.0
       );
+  
+
+  effectShimmer(even, beginTime + lengthOfTime/100, lengthOfTime, lengthOfTime /10, (Math.PI / 180) * 45);
+
+  effectShimmer(odd, beginTime + lengthOfTime/2, lengthOfTime, lengthOfTime /10, (Math.PI / 180) * 90);
+
 
 
 }

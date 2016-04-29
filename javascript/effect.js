@@ -204,7 +204,7 @@ function effectShimmer(gs, beginTime, lengthOfTime, startLength, angle) {
    
    console.log("useStartLength = " + useStartLength + "\ncLT = " + cLT);  
      if (cLT > lengthOfTime || useStartLength < 1) {
-       console.log(" cLT > lengthOfTime ");
+       console.log(" cLT ("+ cLT +") > lengthOfTime (" + lengthOfTime + ")" );
       break;
     }
 
@@ -321,8 +321,8 @@ function effectSparkle(gs, beginTime, lengthOfTime, flickerRateMin, flickerRateM
 
     var scaleVal = getRandomBetween(scaleMin,scaleMax);
 
-    behaviorScale(
-        new Array(grains()[i]), 
+     behaviorScale(
+        new Array(gs[i]), 
         flickerTime,
         beginTime + startTime, 
         {x:scaleVal, y:scaleVal, z:0.0},
@@ -350,8 +350,8 @@ function effectDart(gs, beginTime, lengthOfTime, timeArray ) {
     var xmax = 2;
     var ymin = -1;
     var ymax = 1;
-    var zmin = -2;
-    var zmax = 2;
+    var zmin = 0;
+    var zmax = 0;
 
     if (keepTrack.x < -1) {
       xmin = 2;
