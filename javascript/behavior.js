@@ -54,6 +54,137 @@ function behaviorChangeTexture(gs, startTime, texture) {
 }
 
 
+
+//to is a THREE.Vector3
+function behaviorOpacityTo(gs, lengthOfTime, startTime, to, func = identity, scale = 1.0, repeat = 0) {
+
+  var pv = 0.0;
+
+  var rv = {v:0.0};
+  var tv = {v:1.0}; 
+
+  var ut = {v:to};
+
+
+  var tween = new TWEEN.Tween(rv)
+    .onStart(function() {
+
+      ut.v = ut.v - gs[0].material.uniforms.opacity.value;
+
+      tween.to(tv, lengthOfTime)
+
+    })
+  .onUpdate(function() {
+
+      var cv = {v:func(rv.v * ut.v)};
+      var uv = {v:cv.v - func(pv * ut.v)} ;
+
+      for (var g = 0; g < gs.length; g++) {
+        gs[g].material.uniforms.opacity.value += uv.v * scale;
+      }
+
+      pv = rv.v;
+  })
+  .onComplete(function() {
+  })
+
+  .repeat(repeat)
+    .yoyo(true)
+    .start(startTime);
+
+  return this.tween;
+
+}
+
+
+//"to" is a named array
+function behaviorOpacityFunc(gs, lengthOfTime, startTime = 0, to, func, scale, repeat = 0) {
+
+  var pv = 0.0;
+
+  var rv = {v:0.0};
+  var tv = {v:1.0}; 
+
+  var ut = {v:to}
+
+  this.tween = new TWEEN.Tween(rv)
+    .to( tv, lengthOfTime)
+    .onUpdate(function() {
+
+      var cv = {v:func(rv.v * ut.v)};
+      var uv = {v:cv.v - func(pv * ut.v)} ;
+
+      for (var g = 0; g < gs.length; g++) {
+        gs[g].material.uniforms.opacity.value += uv.v * scale;
+      }
+
+      pv = rv.v;
+
+    })
+  .repeat(repeat)
+    .yoyo(true)
+    .start(startTime);
+
+  return this.tween;
+
+}
+
+
+
+function behaviorOpacity(gs, lengthOfTime, startTime, to, scale = 1.0, repeat = 0) {
+  behaviorOpacityFunc(gs, lengthOfTime, startTime, to, identity, scale, repeat)
+}
+
+
+function behaviorOpacitySin(gs, lengthOfTime, startTime, to, scale, repeat = 0) {
+  behaviorOpacityFunc(gs, lengthOfTime, startTime, to, Math.sin, scale, repeat)
+}
+
+//to is a THREE.Vector3
+function behaviorScaleTo(gs, lengthOfTime, startTime, to, anchor = parent, repeat = 0) {
+
+  var pv = 0.0;
+
+  var rv = {v:0.0};
+  var tv = {v:1.0}; 
+
+
+  var tween = new TWEEN.Tween(rv)
+    .onStart(function() {
+
+      to.x = to.x - gs[0].scale.x;
+      to.y = to.y - gs[0].scale.y;
+      to.z = to.z - gs[0].scale.z;
+      
+      //vecToArr(anchor.worldToLocal(arrToVec(to)));
+      tween.to(tv, lengthOfTime)
+
+    })
+  .onUpdate(function() {
+
+    var cv = {x:(rv.v * to.x), y:(rv.v * to.y), z:(rv.v * to.z) };
+    var uv = {x:(cv.x - (pv * to.x)), y:(cv.y - (pv * to.y)), z:(cv.z - (pv * to.z))};
+
+    for (var g = 0; g < gs.length; g++) {
+      gs[g].scale.x += uv.x;
+      gs[g].scale.y += uv.y;
+      gs[g].scale.z += uv.z;
+    }  
+
+    pv = rv.v;
+  })
+  .onComplete(function() {
+  })
+
+  .repeat(repeat)
+    .yoyo(true)
+    .start(startTime);
+
+  return this.tween;
+
+}
+
+
 //"to" is a named array
 function behaviorScaleFunc(gs, lengthOfTime, startTime = 0, to, func, scale, repeat = 0) {
 
@@ -93,12 +224,12 @@ function behaviorScale(gs, lengthOfTime, startTime = 0, to, scale = 1.0, repeat 
 
 
 function behaviorScaleSin(gs, lengthOfTime, startTime = 0, to, func, scale = 1.0, repeat = 0) {
-  return behaviorScaleFunc(gs, lengthOfTime, startTime, to, identity, scale, repeat);
+  return behaviorScaleFunc(gs, lengthOfTime, startTime, to, func, scale, repeat);
 }
 
 
 
-function behaviorRotateFunc(gs, lengthOfTime, startTime = 0, to, func, scale, repeat = 0) {
+function behaviorRotateFunc(gs, lengthOfTime, startTime = 0, to, func, scale, repeat = 0, yoyo = true) {
 
   var pv = 0.0;
 
@@ -122,7 +253,7 @@ function behaviorRotateFunc(gs, lengthOfTime, startTime = 0, to, func, scale, re
 
     })
   .repeat(repeat)
-    .yoyo(true)
+    .yoyo(yoyo)
     .start(startTime);
 
   return this.tween;
@@ -143,8 +274,13 @@ function behaviorRotateY(gs, lengthOfTime, startTime = 0, to = Math.PI * 2, scal
 }
 
 function behaviorRotateZ(gs, lengthOfTime, startTime = 0, to = Math.PI * 2, scale = 1.0, repeat = 0) {
-  return behaviorRotateFunc(gs, lengthOfTime, startTime, {x:0, y:0, z:to}, identity, scale, repeat);
+  return behaviorRotateFunc(gs, lengthOfTime, startTime, {x:0, y:0, z:to}, identity, scale, repeat, false);
 }
+
+function behaviorRotateZSine(gs, lengthOfTime, startTime = 0, to = Math.PI * 2, scale = 1.0, repeat = 0) {
+  return behaviorRotateFunc(gs, lengthOfTime, startTime, {x:0, y:0, z:to}, Math.sin, scale, repeat);
+}
+
 
 
 //to is a THREE.Vector3

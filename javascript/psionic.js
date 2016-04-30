@@ -2,12 +2,44 @@
 var totalTime = 60000; //(8 * 60 * 1000); //8 minutes
 var numCols = 12;
 var numRows = 12;
-var textures = new Array(5);
+var textures = new Array(1);
+
+var startingDebug = 0; //in seconds
 
 var parent = new THREE.Object3D();
 parent.name = "original parent";
 
 var grainsArr = new Array(); //to hold all grains, regardless of where they are in the scene graph
+
+  var loader = new THREE.TextureLoader();
+  var blur = loader.load('images/gaus2dD.jpg');
+
+  for (var t = 0; t < textures.length; t++) {
+    textures[t] = loader.load('images/' + t + '.jpg');
+    textures[t].magFilter = THREE.NearestFilter;
+  }
+
+
+
+var audio = new Audio();
+audio.src = 'psionic.mp3';
+audio.controls = true;
+audio.autoplay = false;
+document.body.appendChild(audio);
+
+var context = new AudioContext();
+var analyser = context.createAnalyser();
+
+
+
+window.addEventListener('load', function(e) {
+    // Our <audio> element will be the audio source.
+    var source = context.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(context.destination);
+    audio.currentTime = startingDebug; //this is in seconds: e.g., 70.5 = 1 min, 10 and a half seconds
+    }, false);
+
 
 function grains() {
   return grainsArr;
@@ -53,6 +85,7 @@ function makeGrains(cols, rows, scene, tex0, blur, vs, fs) {
           uOff: {type: "f", value: uoff },
           vOff: {type: "f", value: voff },
           uvScale: {type: "f", value: cols }, //i.e. if there are 4 cells, then the width and height are both cut in half = 2.0; if there are 16, then they are cut in quarters = 4.0
+          opacity: {type: "f", value: 0.5 }
         },
           vertexShader: vs,
           fragmentShader: fs,
@@ -108,8 +141,8 @@ function getOffsetsForIndex(g, scale = 1.0) {
 function setupTimeline(scene, stages, briefDelay, totalTime) {
 
   for (var i = 0; i < stages.length; i++) {
-    var beginTime = stages[i].timing.s * totalTime;
-    var lengthOfTime = (stages[i].timing.e - stages[i].timing.s) * totalTime;
+    var beginTime = (stages[i].timing.s * totalTime) ;
+    var lengthOfTime = ((stages[i].timing.e - stages[i].timing.s) * totalTime) ;
     stages[i].action(briefDelay + beginTime, lengthOfTime);
   }
 

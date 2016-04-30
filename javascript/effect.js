@@ -187,24 +187,34 @@ function effectReset(gs, beginTime, lengthOfTime) {
 
    for (var j = 0; j < gs.length; j++) {
 
+     behaviorScaleTo(
+            new Array(gs[j]),
+            lengthOfTime / 3, 
+            beginTime,
+            new THREE.Vector3(1.0,1.0,1.0),
+            gs[j],
+            0   
+            );
+
      var offs = getOffsetsForIndex(j,1.0);
 
        behaviorTranslateTo( 
             new Array(gs[j]), 
-            lengthOfTime, 
-            beginTime + 2000,
+            lengthOfTime / 2, 
+            beginTime + lengthOfTime / 2,
             new THREE.Vector3(offs.x,offs.y,0),
             gs[j], 
             0   
             );
+        
+  
+     
 
-       gs[j].scale.x = 1.0;
-       gs[j].scale.y = 1.0;
-       gs[j].scale.z = 1.0;
    }
 
-       })
-  .start(beginTime + 1000);
+     
+         })
+  .start(beginTime);
 
 
 }
@@ -225,8 +235,8 @@ function effectShimmer(gs, beginTime, lengthOfTime, startLength, angle) {
   var cLT = startLength; // * loopSpeedMultiplier;
   var useStartLength = startLength;
 
-  console.log("in effectShimmer: lengthOfTime = " + lengthOfTime); 
-  console.log("in effectShimmer: startLength = " + startLength);  
+ // console.log("in effectShimmer: lengthOfTime = " + lengthOfTime); 
+ // console.log("in effectShimmer: startLength = " + startLength);  
  
   var loopSpeeds = new Array();
 
@@ -237,14 +247,14 @@ function effectShimmer(gs, beginTime, lengthOfTime, startLength, angle) {
     var useStartLength = useStartLength * loopSpeedMultiplier;
     cLT += useStartLength;
    
-   console.log("useStartLength = " + useStartLength + "\ncLT = " + cLT);  
+ //  console.log("useStartLength = " + useStartLength + "\ncLT = " + cLT);  
      if (cLT > lengthOfTime || useStartLength < 1) {
-       console.log(" cLT ("+ cLT +") > lengthOfTime (" + lengthOfTime + ")" );
+       //console.log(" cLT ("+ cLT +") > lengthOfTime (" + lengthOfTime + ")" );
       break;
     }
 
    numLoops++;
-  console.log("numLoops = " + numLoops);
+  //console.log("numLoops = " + numLoops);
 
 
     
@@ -259,7 +269,7 @@ function effectShimmer(gs, beginTime, lengthOfTime, startLength, angle) {
 
     var useLengthOfTime = loopSpeeds[loop]; //lengthOfTime * loopSpeed;
 
-    console.log("useLengthOfTime = " + useLengthOfTime);
+    //console.log("useLengthOfTime = " + useLengthOfTime);
     //loopSpeed *= loopSpeedMultiplier;
 
     scale *= 0.9;
@@ -372,7 +382,7 @@ function effectSparkle(gs, beginTime, lengthOfTime, flickerRateMin, flickerRateM
 
 function effectDart(gs, beginTime, lengthOfTime, timeArray ) {
 
-  var numDarts = timeArray.length;
+    var numDarts = timeArray.length;
   var dartTimes = timeArray;
 
 
@@ -415,45 +425,23 @@ function effectDart(gs, beginTime, lengthOfTime, timeArray ) {
       zmax = -3;
     }
 
-
     var newPush = getRandomArrayBetween (xmin, xmax, ymin, ymax, zmin, zmax );
     keepTrack.x += newPush.x;
     keepTrack.y += newPush.y;
     keepTrack.z += newPush.z;
 
-
-    // console.log("i = " + i + ", keepTrack = " + keepTrack.x + "/" + keepTrack.y);
-
     positions.push ( newPush );
-
-    /*
-       var which = i%4;
-
-       if (which == 0) {
-       positions.push ( getRandomArrayBetween (-2,0,-1,0 ));
-       } else if (which == 1) {
-       positions.push ( getRandomArrayBetween (-2,0,0,1 ));
-       } else if (which == 2) {
-       positions.push ( getRandomArrayBetween (0,2,0,1 ));
-       } else if (which == 3) {
-       positions.push ( getRandomArrayBetween (0,2,-1,0 ));
-       } 
-       */
   }
 
- // var useBeginTime = dartTimes[0] ;
 
   for (var i = 0; i < numDarts - 1; i++) {
 
     useBeginTime = beginTime + dartTimes[i];
 
-
-    //var to = arrToVec(getRandomArrayBetween(-1,1,-1,1));
     var to = positions[i];
 
     var useParent = parent;  
     var scatter = false; //true;
-
 
     //if (Math.random() < 0.2) {
     if (i % 2 == 0) {
@@ -461,93 +449,167 @@ function effectDart(gs, beginTime, lengthOfTime, timeArray ) {
     }
 
     var dartLength = dartTimes[i+1] - dartTimes[i];
-    console.log("useBeginTime = " + useBeginTime);
-    console.log("\nloop " + i + ", dartLength = " + dartLength);
+    //console.log("useBeginTime = " + useBeginTime);
+    //console.log("\nloop " + i + ", dartLength = " + dartLength);
 
 
     for (var j = 0; j < gs.length; j++) {
-    //for (var j = 0; j < 1; j++) {
     
-      var delayBegin = getRandomBetween(0, Math.min(100,dartLength/8));
-      var delayEnd = getRandomBetween(0, 0);
+      var delayBegin = getRandomBetween(0, dartLength/4);
+      var delayEnd = getRandomBetween(0, dartLength/4);
       var newTo = new THREE.Vector3().copy(to);
-      // console.log("nweVec = X:" + newTo.x + ",  Y:" + newTo.y);
-      /*
-         if (scatter == true) { // && Math.random() < 0.3) {
-         useParent = gs[j];
-         ;
-         } else {
 
-         useParent = gs[j];
-         var offs = getOffsetsForIndex(j);
-         console.log("offs : " + offs.x  + ", " + offs.y); 
-         newTo.x += offs.x;
-         newTo.y += offs.y;
-         } 
-         */
-      /*
-         behaviorTranslateTo( 
-         new Array(gs[j]), 
-         dartTime - (delayBegin + delayEnd), 
-         beginTime + (dartTime * i) + delayBegin,
-         newTo,
-         useParent,
-         0   
-         );
-         */
-    
+      var grainInArr = new Array(gs[j]);
 
-      if (i < numDarts - 2) {
-      behaviorTranslate( 
-          new Array(gs[j]), 
+      if (i < numDarts - 1) {
+        behaviorTranslate( 
+          grainInArr,
           (dartLength) - (delayBegin + delayEnd), 
-          //beginTime + (dartTime * i) - delayBegin*4,
           useBeginTime - delayBegin*2,
           newTo,
           1.0,
           0   
           );
-      } else {
-        var offs = getOffsetsForIndex(j,1.0);
 
-        console.log("HERE! _ ubt = " + useBeginTime);
-        behaviorTranslateTo( 
-            new Array(gs[j]), 
-             (dartLength) - (delayBegin + delayEnd), 
-            useBeginTime,
-            new THREE.Vector3(offs.x,offs.y,0),
-            gs[j], 
-            0   
-            );
+        var sa = getRandomBetween(-0.5,0.5);
+        var sz = getRandomBetween(0.0,0.0);
+
+        behaviorScale(
+            grainInArr,
+          (dartLength) - (delayBegin + delayEnd), 
+          useBeginTime - delayBegin*2,
+          new THREE.Vector3(sa, sa, sz),
+          1.0,
+          0   
+          );  
+      } 
+    }
+  }
+
+ 
+  }
 
 
-      }
 
+  
+function effectDartSimple(gs, beginTime, lengthOfTime, timeArray ) {
+
+    var numDarts = timeArray.length;
+  var dartTimes = timeArray;
+
+
+  var positions = new Array();
+  var keepTrack = getRandomArrayBetween(0,0,0,0);
+
+  for (var i = 0; i < numDarts; i++) {
+
+    var xmin = -2;
+    var xmax = 2;
+    var ymin = -1;
+    var ymax = 1;
+    var zmin = 0;
+    var zmax = 0;
+
+    if (keepTrack.x < -1) {
+      xmin = 2;
+      xmax = 3;
+    }
+    else if (keepTrack.x > 1) {
+      xmin = -2;
+      xmax = -3;
     }
 
-
+    if (keepTrack.y < -1) {
+      ymin = 2;
+      ymax = 3;
     }
+    else if (keepTrack.y > 1) {
+      ymin = -2;
+      ymax = -3;
     }
 
+    if (keepTrack.z < -2) {
+      zmin = 1;
+      zmax = 3;
+    }
+    else if (keepTrack.z > 2) {
+      zmin = -1;
+      zmax = -3;
+    }
 
-  /*
-    for (var j = 0; j < grains().length; j++) {
+    var newPush = getRandomArrayBetween (xmin, xmax, 0, 0, 0, 0 );
+    keepTrack.x += newPush.x;
+    keepTrack.y += newPush.y;
+    keepTrack.z += newPush.z;
 
-      var offs = getOffsetsForIndex(j,1.0);
+    positions.push ( newPush );
+  }
 
 
-      console.log("HERE! _ ubt = " + useBeginTime);
-      behaviorTranslateTo( 
-          new Array(grains()[j]), 
-          1000, 
-          lastBeginTime,
-          new THREE.Vector3(offs.x,offs.y,0),
-          grains()[j], 
-          //parent,
+  for (var i = 0; i < numDarts - 1; i++) {
+
+    useBeginTime = beginTime + dartTimes[i];
+
+    var to = positions[i];
+
+    var useParent = parent;  
+    var scatter = false; //true;
+
+    //if (Math.random() < 0.2) {
+    if (i % 2 == 0) {
+      scatter = false; //true;
+    }
+
+    var dartLength = dartTimes[i+1] - dartTimes[i];
+    //console.log("useBeginTime = " + useBeginTime);
+    //console.log("\nloop " + i + ", dartLength = " + dartLength);
+
+
+    for (var j = 0; j < gs.length; j++) {
+   
+          var delayBegin = getRandomBetween(0, dartLength/4);
+      var delayEnd = getRandomBetween(0, dartLength/4);
+      var newTo = new THREE.Vector3().copy(to);
+
+      var grainInArr = new Array(gs[j]);
+
+      if (i < numDarts - 1) {
+        behaviorTranslate( 
+          grainInArr,
+          (dartLength) - (delayBegin + delayEnd), 
+          useBeginTime - delayBegin*2,
+          newTo,
+          1.0,
           0   
           );
+
+ 
+      } 
     }
-    */
+  }
+
+ 
+  }
+
+
+    /*
+       for (var j = 0; j < grains().length; j++) {
+
+       var offs = getOffsetsForIndex(j,1.0);
+
+
+       console.log("HERE! _ ubt = " + useBeginTime);
+       behaviorTranslateTo( 
+       new Array(grains()[j]), 
+       1000, 
+       lastBeginTime,
+       new THREE.Vector3(offs.x,offs.y,0),
+       grains()[j], 
+//parent,
+0   
+);
+}
+*/
 
 
 

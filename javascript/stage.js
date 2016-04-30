@@ -79,7 +79,7 @@ function calcRingsFromSquare(numGrains) {
 
   var squareroot = Math.sqrt(numGrains);
   var numRings = Math.floor((squareroot + 1) / 2) ;
-  console.log("numRings = " + numRings);
+  //console.log("numRings = " + numRings);
 
   var returnArr = new Array(numRings);
 
@@ -89,7 +89,7 @@ function calcRingsFromSquare(numGrains) {
   for (var i = 0; i < numRings; i++) {
 
     var rawNum = Math.floor((Math.sqrt(grainsLeft) - 1) * 4);
-    console.log("i = " + i + " rawNum " + rawNum);
+    //console.log("i = " + i + " rawNum " + rawNum);
     returnArr[i] = rawNum;
 
     grainsLeft -= rawNum;
@@ -127,7 +127,7 @@ function formationRings(gs, numRings, maxRadius) {
 
   numRings = ringArr.length;
 
-  console.log("ringArr[ringArr.length - 1].length = " + ringArr[ringArr.length - 1]);
+  //console.log("ringArr[ringArr.length - 1].length = " + ringArr[ringArr.length - 1]);
   //if (ringArr.length % 2 == 0) {
   if (ringArr[ringArr.length - 1] == 1) {  
     //console.log("here ! even number of rings! = " + ringArr.length);
@@ -169,7 +169,7 @@ function formationRings(gs, numRings, maxRadius) {
       var val2 = Math.floor(g % (ringArr[i]/4));
 
       var posVec = new THREE.Vector3(0,0,0);
-      console.log("val = " + val + " val2 = " + val2);
+      //console.log("val = " + val + " val2 = " + val2);
       if (val == 0) {
         //left side
         posVec = new THREE.Vector3(-dist/2.0, -dist/2.0 + (sideInc * val2), 0.0);
@@ -396,6 +396,18 @@ StageTest1.prototype.action = function(beginTime, lengthOfTime) {
 }
 
 
+StageReset.prototype = new Stage(); 
+StageReset.prototype.constructor = StageReset;
+  
+function StageReset(name, timing) {
+  Stage.call(this, name, timing); 
+}
+
+StageReset.prototype.action = function(beginTime, lengthOfTime) {
+ effectReset(grains(), beginTime, lengthOfTime);
+}
+
+
 
 Stage1.prototype = new Stage(); 
 Stage1.prototype.constructor = Stage1;
@@ -406,80 +418,96 @@ function Stage1(name, timing) {
 
 Stage1.prototype.action = function(beginTime, lengthOfTime) {
 
+  
+  for (var g = 0; g < grains().length; g++) {
+
     
- var dartTimes = [
-2133.7200000000003,
-2345.73,
-2567.435,
-4017.4150000000004,
-4263.710000000001,
-4486.595,
-5364.055,
-11504.08,
-14253.845000000001,
-14542.175000000003,
-14850.420000000002,
-15174.255000000001,
-18326.320000000003,
-19624.445,
-20019.8,
-20392.000000000004,
-20592.34,
-20736.815,
-21037.53,
-21943.675000000003,
-22326.925000000003,
-22727.515,
-23176.160000000003,
-23816.125000000004,
-24439.140000000003,
-25426.250000000004,
-25614.295000000002,
-25808.440000000002,
-29312.18
-
-];
+    var grainInArr = new Array(grains()[g]);
+   
+   behaviorOpacitySin(  grainInArr, 2000, beginTime+lengthOfTime, Math.PI, -0.5, 0  );
 
 
- var numDarts = dartTimes.length;
+    /*
+    behaviorScaleTo(
+        grainInArr,
+        1000,
+        beginTime,
+        new THREE.Vector3(6.0,2.0,1.0),
+        grainInArr,
+        0   
+        );
 
 
-//var dartTimes = new Array(numDarts) ;
+
+    behaviorScaleTo(
+        grainInArr,
+        1000,
+        beginTime + 1000,
+        new THREE.Vector3(1.0,1.0,1.0),
+        grainInArr,
+        0   
+        );
+        */
+  }
+  //if (1 == 1) return;
   
 
-  var totalDartTime = 30000; //lengthOfTime - (lengthOfTime * 0.1); 
-  //var dartTime = totalDartTime / (numDarts);
-  var lastBeginTime = beginTime + totalDartTime;
+  var dartTimes = [
+   2621,
+2737,
+2837,
+3037,
+3137,
+4241,
+4341,
+4889,
+5459,
+5559,
+5659,
+12800,
+12900,
+13000,
+14695,
+14795,
+15066,
+15166,
+15282,
+17924,
+20148,
+20358,
+20560,
+20793,
+21143,
+21396,
+21676,
+22364,
+22943,
+23310,
+24099,
+24400,
+24602,
+25200,
+25794,
+26000
+      ];
 
-  /*
-   var dartTimes = new Array(numDarts);
-  for (var i = 0; i < numDarts; i++) {
-    dartTimes[i] = dartTime;
-    //dartTimes[i] = 1000;
+
+  var numDarts = dartTimes.length;
+
+  var scaleDT = lengthOfTime / dartTimes[numDarts - 1];
+
+  for (var dt = 0; dt < numDarts; dt++) {
+    //console.log("dartTime was " + dartTimes[dt]);
+    dartTimes[dt] *= scaleDT;
+    //console.log("dartTime now " + dartTimes[dt]);
   }
-  */
 
 
- /*
-  dartTimes[0] = dartTime * 0.3;
-  dartTimes[1] = dartTime * 0.3;
-  dartTimes[2] = dartTime * 2.0;
-  dartTimes[3] = dartTime * 0.5;
-  dartTimes[4] = dartTime * 0.5;
-  dartTimes[5] = dartTime * 3.0;
+  //var dartTimes = new Array(numDarts) ;
 
 
-  dartTimes[6] = dartTime * 0.5;
-  dartTimes[7] = dartTime * 0.1;
-  dartTimes[8] = dartTime * 0.1;
-  dartTimes[9] = dartTime * 1.0;
-  dartTimes[10] = dartTime * 0.1;
-  dartTimes[11] = dartTime * 0.1;
-  dartTimes[12] = dartTime * 0.1;
-  dartTimes[13] = dartTime * 1.0;
-  dartTimes[14] = dartTime * 0.1;
-  dartTimes[15] = dartTime * 0.1;
-*/
+  var totalDartTime = dartTimes[numDarts - 1]; 
+  var lastBeginTime = beginTime + totalDartTime;
 
 
   effectDart(grains(), beginTime, lengthOfTime, dartTimes);
@@ -487,22 +515,67 @@ Stage1.prototype.action = function(beginTime, lengthOfTime) {
 }
 
 
+
 Stage4.prototype = new Stage(); 
 Stage4.prototype.constructor = Stage4;
-  
+
 function Stage4(name, timing) {
   Stage.call(this, name, timing); 
 }
 
 Stage4.prototype.action = function(beginTime, lengthOfTime) {
 
-    
- var dartTimes = [
-2133.7200000000003,
-2345.73,
-2567.435,
-4017.4150000000004,
-4263.710000000001,
+
+for (var ggg = 0; ggg< grains().length; ggg++) {
+
+  behaviorOpacityTo(  new Array(grains()[ggg]), getRandomBetween(5000,5000), beginTime + getRandomBetween(0,10000), 0.2  );
+
+
+ // behaviorTranslate(new Array(grains()[ggg]), lengthOfTime/32, beginTime, new THREE.Vector3(0,0,1));
+
+  var repeatsS = (Math.floor( getRandomBetween(1, 8)) * 2) + 1;
+  var lotS = lengthOfTime/(repeatsS + 1);
+
+  behaviorScale( new Array(grains()[ggg]), lotS, beginTime, new THREE.Vector3(10,10,0), 1, repeatsS ); 
+
+  var repeatsR = (getRandomBetween(0, 2) * 2) + 1;
+  
+  var lotR = lengthOfTime/(repeatsR + 1);
+
+
+ behaviorRotateZ( new Array(grains()[ggg]), lotR, beginTime, getRandomBetween(-Math.PI * 2, Math.PI * 2), 1, repeatsR);
+
+//gs, beginTime, lengthOfTime, startLength, angle 
+    effectShimmer(new Array(grains()[ggg]), getRandomBetween(lengthOfTime/2,lengthOfTime), 1000, 2000, getRandomBetween(0, Math.PI * 2));
+
+
+  behaviorOpacityTo(  new Array(grains()[ggg]), getRandomBetween(5000,5000), beginTime + lengthOfTime - getRandomBetween(5000,10000), 0.0  );
+
+
+}
+
+
+}
+
+
+
+
+Stage6.prototype = new Stage(); 
+Stage6.prototype.constructor = Stage6;
+
+function Stage6(name, timing) {
+  Stage.call(this, name, timing); 
+}
+
+Stage6.prototype.action = function(beginTime, lengthOfTime) {
+
+
+  var dartTimes = [
+    2133.7200000000003,
+    2345.73,
+    2567.435,
+    4017.4150000000004,
+    4263.710000000001,
 4486.595,
 5364.055,
 11504.08,
@@ -571,10 +644,10 @@ Stage9.prototype.action = function(beginTime, lengthOfTime) {
 
           var ga = ra.grainObjs[g];
           var grain = ga.grain;
-          console.log("A parent was " + grain.uuid); 
+          //console.log("A parent was " + grain.uuid); 
 
           ra.parentObj.add(grain); //in THREEjs, adding automatically handles removing it from current parent
-          console.log("A parent now " + ra.parentObj.uuid); 
+          //console.log("A parent now " + ra.parentObj.uuid); 
 
 
           behaviorTranslateTo( new Array(grain), 
@@ -586,7 +659,7 @@ Stage9.prototype.action = function(beginTime, lengthOfTime) {
             );
         }
 
-        console.log("A grains().length = " + grains().length);
+        //console.log("A grains().length = " + grains().length);
 
       
        
@@ -616,7 +689,6 @@ function Stage3(name, timing) {
 Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
 
-
   //formation should be in a behavior, otherwise the scene graph changes right away!
   //
   //var bf = behaviorFormation( grains(), beginTime, formationRings, 5, 2.5);
@@ -627,8 +699,6 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
     .onStart(function() {
 
       shuffleArray(grains());
-
-
 
       var attachArr = formationRings(grains(), 5, 2.0);
 
@@ -647,8 +717,8 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
 
           behaviorTranslateTo( new Array(grain), 
-              lengthOfTime/2, 
-              beginTime,
+              32000 ,
+              beginTime + 2000,
               vecToArr(ga.pos), 
               grain,
               0   
@@ -657,13 +727,27 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
 
         }
 
+
+           var st_w = beginTime;
+          var st_inc = 100;
+           for (var w = 30000; w < 65000; w += st_inc) {
+
+           behaviorRotateZSine(new Array(ra.parentObj), getRandomBetween(st_inc/2, st_inc/2), st_w, getRandomBetween(-Math.PI * 4, Math.PI * 4));
+           st_inc = getRandomBetween(1500,3500);
+           st_w = beginTime + w;
+          }
+
+
         if (r%2 == 0) {
           // behaviorRotateZ(ra.parentObj.children, lengthOfTime, beginTime, Math.PI);
-          behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI);
+          behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime + 100, Math.PI);
 
+              
           if (r == 4) {
-            behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime, Math.PI, 32.0);
+            behaviorRotateZ(new Array(ra.parentObj), lengthOfTime, beginTime + 100, Math.PI, 32.0);
 
+
+//30000 -> 75000
 
           }
         } else {
@@ -673,10 +757,10 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
   }
 
   
-  var sparkleLoops = 20;
-  var beginSparkleTime = beginTime + lengthOfTime/4;
+  var sparkleLoops = 10;
+  var beginSparkleTime = beginTime + 30000; //lengthOfTime/4;
   
-  var sparkleLoopTime = (lengthOfTime - lengthOfTime/2) / sparkleLoops;
+  var sparkleLoopTime = (63000 - 30000) / sparkleLoops;
 
   //gs, beginTime, lengthOfTime, flickerRateMin, flickerRateMax, scaleMin, scaleMax
   for (var t = 0; t < sparkleLoops; t++) {
@@ -687,19 +771,19 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
   //for (var el = 0; el < attachArr[0].parentObj.children.length; el++) {
    
  
-  behaviorScale(attachArr[0].parentObj.children, lengthOfTime - lengthOfTime/2, beginSparkleTime, {x:7.0,y:7.0,z:0.0}, 1.0, 1);
+  behaviorScale(attachArr[0].parentObj.children, lengthOfTime - lengthOfTime/2, beginSparkleTime, {x:6.0,y:6.0,z:0.0}, 1.0, 1);
   
    //}
 
 
- 
+/* 
   for (var aag = 0; aag < attachArr[1].parentObj.children.length; aag++) {
 
     var side = Math.floor(Math.sqrt(attachArr[1].parentObj.children.length));
     var offs = getOffsetsForIndexB(aag, 2.0, side, side);
     var grain = attachArr[1].parentObj.children[aag];
 
-    console.log("grain = " + grain.position.x);
+    //console.log("grain = " + grain.position.x);
 
     behaviorTranslateTo(  
         new Array(grain), 
@@ -718,7 +802,7 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
     var offs = getOffsetsForIndexB(aag, 2.0, side, side);
     var grain = attachArr[3].parentObj.children[aag];
 
-    console.log("grain = " + grain.position.x);
+    //console.log("grain = " + grain.position.x);
 
     behaviorTranslateTo(  
         new Array(grain), 
@@ -737,7 +821,7 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
     var offs = getOffsetsForIndexB(aag, 2.0, side, side);
     var grain = attachArr[4].parentObj.children[aag];
 
-    console.log("grain = " + grain.position.x);
+    //console.log("grain = " + grain.position.x);
 
     behaviorTranslateTo(  
         new Array(grain), 
@@ -748,72 +832,57 @@ Stage3.prototype.action = function(beginTime, lengthOfTime) {
         0   
         );
   }
+  */
+
+
+var dartTimes1 = new Array();
+var prevDartTime1 = 0;
+for (var dt = 0; dt < 1000; dt++) {
+
+  var checkVal = prevDartTime1 + getRandomBetween(100,1500);
+
+  if (checkVal > lengthOfTime - 77000) {
+    break;
+  } else {
+    dartTimes1.push(checkVal);
+    prevDartTime1 = checkVal;
+  }
+}
+
+
+var dartTimes2 = new Array();
+var prevDartTime2 = 0;
+for (var dt = 0; dt < 1000; dt++) {
+
+  var checkVal = prevDartTime2 + getRandomBetween(100,1000);
+
+  if (checkVal > lengthOfTime - 77000) {
+    break;
+  } else {
+    dartTimes2.push(checkVal);
+    prevDartTime2 = checkVal;
+  }
+}
+
+
+  //effectDartSimple(attachArr[1].parentObj.children, beginTime + 75000, lengthOfTime - 77000, dartTimes1);
+  //effectDartSimple(attachArr[3].parentObj.children, beginTime + 75000, lengthOfTime - 77000, dartTimes2);
+  //effectDartSimple(attachArr[4].parentObj.children, beginTime + 75000, lengthOfTime- 77000, dartTimes2);
+
+
+for (var ggg = 0; ggg< grains().length; ggg++) {
+  behaviorOpacity(  new Array(grains()[ggg]), getRandomBetween(50,5000), beginTime + getRandomBetween(72000,77000) , -0.5  );
+}
 
 
 
+ behaviorReattach(beginTime + lengthOfTime - 10000);
+ effectReset(grains(), beginTime + lengthOfTime - 5000, 1000)
 
+    //fade out completely
+    //
+    //behaviorOpacity(gs, lengthOfTime, startTime, to, scale = 1.0, repeat = 0) {
 
-  var dartTimes = [
-    2133.7200000000003,
-    2345.73,
-    2567.435,
-    4017.4150000000004,
-    4263.710000000001,
-    4486.595,
-    5364.055,
-    11504.08,
-    14253.845000000001,
-    14542.175000000003,
-    14850.420000000002,
-    15174.255000000001,
-    18326.320000000003,
-    19624.445,
-    20019.8,
-    20392.000000000004,
-    20592.34,
-    20736.815,
-    21037.53,
-    21943.675000000003,
-    22326.925000000003,
-    22727.515,
-    23176.160000000003,
-    23816.125000000004,
-    24439.140000000003,
-    25426.250000000004,
-    25614.295000000002,
-    25808.440000000002,
-    29312.18,
-    32000,
-    33000,
-    34000,
-    35000,
-    38000,
-    40000,
-    41000,
-    43000,
-    45000,  
-
-
-    ];
-
-
-
-
-  var numDarts = dartTimes.length;
-
- // var totalDartTime = 000; 
- // var lastBeginTime = beginTime + totalDartTime;
-
-  effectDart(attachArr[1].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
-
- effectDart(attachArr[3].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
-
- effectDart(attachArr[4].parentObj.children, beginTime + lengthOfTime /2, lengthOfTime, dartTimes);
-
-
-
- behaviorReattach(lengthOfTime * 2  + 100);
- effectReset(grains(), lengthOfTime * 2 + 1000, 1000)
 
 
 
@@ -848,16 +917,21 @@ Stage2.prototype.action = function(beginTime, lengthOfTime) {
   var lot = lengthOfTime / numTimes;
   var bt = beginTime;
 
-  console.log("A orig lengthOfTime = " + lengthOfTime);  
+  //console.log("A orig lengthOfTime = " + lengthOfTime);  
 
   for (var i = 0; i < numTimes; i++) {
     //shimmer
-    console.log("B orig lengthOfTime = " + lot);  
+    //console.log("B orig lengthOfTime = " + lot);  
 
     effectShimmer(grains(), bt, lot, lot/4, Math.PI / 2);
 
     bt += lot;
   }
+
+    
+  behaviorOpacitySin(  grains(), 5000, beginTime+lengthOfTime - 500, Math.PI, -1, 0  );
+
+
 
 }
 
@@ -875,11 +949,19 @@ function Stage5(name, timing) {
 
 Stage5.prototype.action = function(beginTime, lengthOfTime) {
 
-  
+ 
+for (var ggg = 0; ggg < grains().length; ggg++) {
+
+  //fade in
+  behaviorOpacityTo(  new Array(grains()[ggg]), getRandomBetween(5000,5000), beginTime + getRandomBetween(0,10000), 0.5  );
+}
+
+
+ 
+
     var even = grains().filter(filterEven);
     var odd = grains().filter(filterOdd);
   
-
   behaviorSineY( even, 
       lengthOfTime, 
       beginTime,
@@ -923,6 +1005,11 @@ Stage5.prototype.action = function(beginTime, lengthOfTime) {
       );
 
 
+ //fade out
+  behaviorOpacityTo(  new Array(odd[i]), getRandomBetween(3000,15000), beginTime + lengthOfTime - getRandomBetween(0,10000), 0.0  );
+
+
+
 
    }
 
@@ -949,6 +1036,14 @@ Stage5.prototype.action = function(beginTime, lengthOfTime) {
       1.0,
       howMany
       );
+   
+   
+   
+ //fade out
+  behaviorOpacityTo(  new Array(even[i]), getRandomBetween(3000,15000), beginTime + lengthOfTime - getRandomBetween(0,10000), 0.0  );
+
+
+
    }
 
 
@@ -979,10 +1074,70 @@ Stage5.prototype.action = function(beginTime, lengthOfTime) {
 
 
 
+   
+
 }
 
 
 
+
+
+
+Stage7.prototype = new Stage(); 
+Stage7.prototype.constructor = Stage7;
+
+function Stage7(name, timing) {
+  Stage.call(this, name, timing); 
+}
+
+Stage7.prototype.action = function(beginTime, lengthOfTime) {
+
+
+ 
+for (var ggg = 0; ggg< grains().length; ggg++) {
+
+  behaviorOpacity(   new Array(grains()[ggg]), lengthOfTime/16, beginTime, 0.2  );
+  behaviorOpacity(   new Array(grains()[ggg]), lengthOfTime/16, beginTime + lengthOfTime - lengthOfTime/16, -0.2 );
+
+
+  behaviorScaleSin( 
+  new Array(grains()[ggg]),
+  lengthOfTime, 
+  beginTime,
+  new THREE.Vector3(Math.PI ,Math.PI ,0.0),
+  Math.sin,
+  3.0, //Math.PI * 2,
+  0
+  );
+
+
+  behaviorSineX(
+      new Array(grains()[ggg]), 
+      lengthOfTime, 
+      beginTime,
+      Math.PI * 64, 
+      getRandomBetween(0,0.2), 
+      0
+      );
+
+  
+  behaviorSineY(
+      new Array(grains()[ggg]), 
+      lengthOfTime, 
+      beginTime,
+      Math.PI * 64, 
+      getRandomBetween(0,0.4), 
+      0
+      );
+
+
+
+  //behaviorOpacityTo(  new Array(grains()[ggg]), getRandomBetween(5000,5000), beginTime + getRandomBetween(0,10000), 0.0  );
+}
+
+
+
+}
 
 
 
