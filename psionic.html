@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>demo - shader</title>
+<title>Psionic - C. Jette (composition), C. Miller (oboe), A. Forbes (visuals)</title>
 <meta charset="utf-8">
 <style>
 body {
@@ -23,8 +23,32 @@ body {
 <script src="javascript/effect.js"></script>
 
 
+<img id="splash" src="images/0.jpg" style="  position: absolute;
+    top: 0%;
+    left: 0%;
+    width:100%;
+">
 
 
+<p id="text1" style="position:absolute;z-index:100;left:30px;top:30px">
+<a style="font-family:helvetica,arial;
+  font-size:96px;
+  color:white;
+  "
+  > 
+Psionic 2016
+</a>
+<br>
+<a style="font-family:helvetica,arial;font-size:54px;color:white;">
+  
+  
+  christopher jette (composition),
+  courtney miller (oboe),
+  angus forbes (visuals),
+  terry conrad and christopher jette (images)
+
+</a>
+</p>
 <script id="vertexShader" type="x-shader/x-vertex">
 
       precision mediump float;
@@ -91,6 +115,13 @@ var beginTime = 0;
 
 function keypress(event) {
 
+var image_x = document.getElementById('splash');
+image_x.parentNode.removeChild(image_x);
+
+var text1_x = document.getElementById('text1');
+text1_x.parentNode.removeChild(text1_x);
+
+  
   var keyVal = '?';
 
   if (event.which != 0 && event.charCode != 0) {
@@ -111,7 +142,8 @@ function keypress(event) {
     init();
     animate();
   } else   if (keyVal == 'z') {
-    console.log(performance.now() - startMS);
+   // console.log("startingDebug = " + startingDebug);
+    console.log((performance.now() - startMS) + (startingDebug * 1000));
   }
 }
 
@@ -170,8 +202,14 @@ function init() {
   var t4s = secondsToPerc(208 - starting);
   var t4e = secondsToPerc(268 - starting);
 
-  var t7s_earlier_a = secondsToPerc(300 - starting);
-  var t7e_earlier_a = secondsToPerc(302 - starting);
+  
+
+  var t7s_earlier_a = secondsToPerc(286 - starting);
+  var t7e_earlier_a = secondsToPerc(287.8 - starting);
+
+
+  var t7s_earlier_b = secondsToPerc(302 - starting);
+  var t7e_earlier_b = secondsToPerc(306 - starting);
 
   var t5s = secondsToPerc(310 - starting);
   var t5e = secondsToPerc(405 - starting);
@@ -198,39 +236,46 @@ function init() {
   var t7s_3c = secondsToPerc(405 - starting);
   var t7e_3c = secondsToPerc(407 - starting);
 
-  var t7s_4a = secondsToPerc(435 - starting);
+  var t7s_4a = secondsToPerc(436 - starting);
   var t7e_4a = secondsToPerc(439 - starting);
 
+  var t7s_4b = secondsToPerc(438 - starting);
+  var t7e_4b = secondsToPerc(442 - starting);
+
+  var t7s_4c = secondsToPerc(441 - starting);
+  var t7e_4c = secondsToPerc(445 - starting);
+
+  var t7s_4d = secondsToPerc(444 - starting);
+  var t7e_4d = secondsToPerc(448 - starting);
+  var t7s_4e = secondsToPerc(447 - starting);
+  var t7e_4e = secondsToPerc(451 - starting);
+  var t7s_4f = secondsToPerc(450 - starting);
+  var t7e_4f = secondsToPerc(456 - starting);
 
 
 
 
-  //  var t5s = secondsToPerc(220);
-  //  var t5e = secondsToPerc(300);
 
 
-
-
-  console.log("t1 : " + t1s + "/" + t1e);
 
   var stages = new Array(  
+
+
       
-               new Stage1("solo oboe", {s:t1s, e:t1e} ) ,
-         new StageReset("solo oboe", {s:tr1s, e:tr1e} ),
-         new Stage2("s2", {s:t2s, e:t2e}),
-         new Stage3("s3", {s:t3s, e:t3e}),
-       
+      new Stage1("solo oboe", {s:t1s, e:t1e} ) ,
+      new StageReset("solo oboe", {s:tr1s, e:tr1e} ),
+      new Stage2("s2", {s:t2s, e:t2e}),
+      new Stage3("s3", {s:t3s, e:t3e}),
+      new Stage4("s4", {s:t4s, e:t4e}),
 
-      // new Stage9("s9", {s:t1s, e:t1e})
-
-
-         new Stage4("s4", {s:t4s, e:t4e}),
-       
-         new Stage7("", {s:t7s_earlier_a, e:t7e_earlier_a}),
       
+      new Stage7("", {s:t7s_earlier_a, e:t7e_earlier_a}),
+      new Stage7("", {s:t7s_earlier_b, e:t7e_earlier_b}),
 
 
-         new Stage5("s5", {s:t5s, e:t5e}),
+
+
+      new Stage5("s5", {s:t5s, e:t5e}),
 
       new Stage7("s7", {s:t7s, e:t7e}),
 
@@ -241,22 +286,23 @@ function init() {
       new Stage7("s7", {s:t7s_2c, e:t7e_2c}),
       new Stage7("s7", {s:t7s_2d, e:t7e_2d}),
 
-
       new Stage7("s7", {s:t7s_3a, e:t7e_3a}),
       new Stage7("s7", {s:t7s_3b, e:t7e_3b}),
       new Stage7("s7", {s:t7s_3c, e:t7e_3c}),
 
-      new Stage7("s7", {s:t7s_4a, e:t7e_4a})
-
-
-
+      new Stage7("s7", {s:t7s_4a, e:t7e_4a}),
+      new Stage7("s7", {s:t7s_4b, e:t7e_4b}),
+      new Stage7("s7", {s:t7s_4c, e:t7e_4c}),
+      new Stage7("s7", {s:t7s_4d, e:t7e_4d}),
+      new Stage7("s7", {s:t7s_4e, e:t7e_4e}),
+      new Stage7("s7", {s:t7s_4f, e:t7e_4f})
         );
 
   console.log("beginTime = " + beginTime);
 
   setupTimeline(scene, stages, beginTime, totalTime);
 
-  audio.play(); // = true;
+  audio.play(); 
   renderer = new THREE.WebGLRenderer();
   renderer.setClearColor( 0x000000 );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -265,33 +311,7 @@ function init() {
 
   window.addEventListener( 'resize', onWindowResize, false );
 
-  /*
-     var coords = { x: 0, y: 0 };
-     var o0 = scene.children[ 0 ];
-
-     var yVal = {y:0.0};
-
-  //var tween = new TWEEN.Tween(o0.rotation)
-  var tween = new TWEEN.Tween(yVal)
-  .to( {y:Math.PI * 2.0}, 1000)
-  //.to({ x: 6.28, y: 6.28, z: 6.28 }, 1000)
-  // .easing(TWEEN.Easing.Sinusoidal.InOut)
-  .onUpdate(function() {
-  o0.position.y = 0.0 + Math.sin(yVal.y);
-  console.log(Math.sin(yVal.y));
-
-  })
-  //.onUpdate(function() {
-  //    console.log(coords.x, coords.y);
-  //    var o0 = scene.children[ 0 ];
-  //    o0.rotation.z = coords.y;
-  //    })
-  .repeat(5)
-  .startTime(3000)
-  //.yoyo(true)
-  .start();
-   */
-
+ 
 
 
 }
