@@ -12,6 +12,10 @@ http://creativecoding.evl.uic.edu/Psionic/psionic.html</a>. Press 'a' to start t
 You can aslo download a 350MB video of the visuals from: <a href="http://creativecoding.evl.uic.edu/Psionic/psionic.mov">
 http://creativecoding.evl.uic.edu/Psionic/psionic.mov</a>.
 
+
+<img src="screenshots.jpg"/>
+
+
 A recording of the performance with Courtney Miller on oboe will be posted soon.
 
 
