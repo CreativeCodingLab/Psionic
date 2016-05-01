@@ -1,4 +1,4 @@
 # Psionic
 Animation for Christopher Jette's composition "Psionic"
 
-<img src="splash.png" width="350"/>
+<img src="splash2.png"/>
